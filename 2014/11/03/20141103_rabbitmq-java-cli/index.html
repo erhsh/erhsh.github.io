@@ -151,7 +151,10 @@
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.queueDeclare(<span class="string">"MsgTopic"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);
+    <span class="comment">// 声明消息队列</span>
+    channel.queueDeclare(<span class="string">"MsgTopic1"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);
+
+    <span class="comment">// 发布消息</span>
     channel.basicPublish(<span class="string">"MsgTopic"</span>, <span class="string">"8"</span>, <span class="keyword">null</span>, <span class="string">"Hello World!"</span>.getBytes());
     System.<span class="keyword">out</span>.println(<span class="string">" [x] Sent '"</span> + message + <span class="string">"'"</span>);
 
@@ -165,28 +168,25 @@
     <span class="tag">&lt;<span class="title">recevieQueue</span>&gt;</span>
         <span class="tag">&lt;<span class="title">exchangeName</span>&gt;</span>MsgTopic<span class="tag">&lt;/<span class="title">exchangeName</span>&gt;</span>
         <span class="tag">&lt;<span class="title">queueName</span>&gt;</span>alarmQueue<span class="tag">&lt;/<span class="title">queueName</span>&gt;</span>
-        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.blackcrystalinfo.push.parser.impl.AlarmMsgParser
-        <span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.erhsh.push.parser.impl.AlarmMsgParser<span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
         <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>8<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
     <span class="tag">&lt;/<span class="title">recevieQueue</span>&gt;</span>
     <span class="tag">&lt;<span class="title">recevieQueue</span>&gt;</span>
         <span class="tag">&lt;<span class="title">exchangeName</span>&gt;</span>MsgTopic<span class="tag">&lt;/<span class="title">exchangeName</span>&gt;</span>
         <span class="tag">&lt;<span class="title">queueName</span>&gt;</span>upgradeQueue<span class="tag">&lt;/<span class="title">queueName</span>&gt;</span>
-        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.blackcrystalinfo.push.parser.impl.UpgradeMsgParser
-        <span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.erhsh.push.parser.impl.UpgradeMsgParser<span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
         <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>9<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
         <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>10<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
     <span class="tag">&lt;/<span class="title">recevieQueue</span>&gt;</span>
     <span class="tag">&lt;<span class="title">recevieQueue</span>&gt;</span>
         <span class="tag">&lt;<span class="title">exchangeName</span>&gt;</span>MsgTopic<span class="tag">&lt;/<span class="title">exchangeName</span>&gt;</span>
         <span class="tag">&lt;<span class="title">queueName</span>&gt;</span>allQueue<span class="tag">&lt;/<span class="title">queueName</span>&gt;</span>
-        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.blackcrystalinfo.push.parser.impl.UpgradeMsgParser
-        <span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.erhsh.push.parser.impl.UpgradeMsgParser<span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
         <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>#<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
     <span class="tag">&lt;/<span class="title">recevieQueue</span>&gt;</span>
 <span class="tag">&lt;/<span class="title">rmqReceiveCfg</span>&gt;</span>
 </code></pre><p>对应的配置类：</p>
-<pre><code><span class="keyword">package</span> com.blackcrystalinfo.push.test;
+<pre><code><span class="keyword">package</span> com.erhsh.push.test;
 
 <span class="keyword">import</span> java.io.InputStream;
 <span class="keyword">import</span> java.util.List;
