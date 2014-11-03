@@ -1,0 +1,572 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh_CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>RabbitMq之java实战 | Erhsh Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="erhsh">
+    
+    <meta name="description" itemprop="description" content="曾经以为理解了RabbitMq，今天应对新需求，发现理解还是不到位。">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="Erhsh Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Erhsh Blog" title="Erhsh Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Erhsh Blog">Erhsh Blog</a></h1>
+				<h2 class="blog-motto">等想一个酷点的描述补充上来。</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:blog.erhsh.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/11/03/20141103_rabbitmq-java-cli/" title="RabbitMq之java实战" itemprop="url">RabbitMq之java实战</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
+		
+  <p class="article-time">
+    <time datetime="2014-11-03T14:55:16.000Z" itemprop="datePublished"> Published 11月 3 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMq之java实战"><span class="toc-number">1.</span> <span class="toc-text">RabbitMq之java实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消费者"><span class="toc-number">1.1.</span> <span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生产者"><span class="toc-number">1.2.</span> <span class="toc-text">生产者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可配置的消费者"><span class="toc-number">1.3.</span> <span class="toc-text">可配置的消费者</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="RabbitMq之java实战">RabbitMq之java实战</h2>
+<h3 id="消费者">消费者</h3>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) throws Exception {
+    <span class="comment">// 建立连接，得到channel：</span>
+    ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();
+    factory.setHost(<span class="string">"127.0.0.1"</span>);
+    factory.setPort(<span class="number">5672</span>);
+    factory.setUsername(<span class="string">"guest"</span>);
+    factory.setPassword(<span class="string">"guest"</span>);
+
+
+    Connection connection = factory.newConnection();
+    Channel channel = connection.createChannel();
+
+    <span class="comment">// 构建消费者：</span>
+    QueueingConsumer consumer = <span class="keyword">new</span> QueueingConsumer(channel);
+
+    <span class="comment">// 声明交换机，有则用，无则创建：</span>
+    channel.exchangeDeclare(<span class="string">"MsgTopic1"</span>, <span class="string">"topic"</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);
+
+    <span class="comment">// 声明消息队列，有则用，无则创建：</span>
+    channel.queueDeclare(<span class="string">"queueAlarm"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">null</span>);
+
+    <span class="comment">// 队列绑定，指定该队列接收来自哪个交换机下哪条路由的消息：</span>
+    channel.queueBind(<span class="string">"queueAlarm"</span>, <span class="string">"MsgTopic1"</span>, <span class="string">"rout1_1"</span>);
+    channel.queueBind(<span class="string">"queueAlarm"</span>, <span class="string">"MsgTopic1"</span>, <span class="string">"rout1_2"</span>);
+
+    <span class="comment">// 指定消费者</span>
+    channel.basicConsume(<span class="string">"queueAlarm"</span>, <span class="keyword">true</span>, consumer);
+
+    <span class="comment">// 可绑定多个关系</span>
+    channel.exchangeDeclare(<span class="string">"MsgTopic2"</span>, <span class="string">"topic"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);
+    channel.queueDeclare(<span class="string">"updateQueue"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">null</span>);
+    channel.queueBind(<span class="string">"updateQueue"</span>, <span class="string">"MsgTopic2"</span>, <span class="string">"#"</span>);
+    channel.queueBind(<span class="string">"updateQueue"</span>, <span class="string">"MsgTopic2"</span>, <span class="string">"rout2_2"</span>);
+    channel.basicConsume(<span class="string">"updateQueue"</span>, <span class="keyword">true</span>, consumer);
+
+    <span class="comment">// 消费者消费消息</span>
+    <span class="keyword">while</span> (<span class="keyword">true</span>) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = <span class="keyword">new</span> String(delivery.getBody());
+        String routingKey = delivery.getEnvelope().getRoutingKey();
+
+        System.<span class="keyword">out</span>.println(<span class="string">" [x] Received '"</span> + routingKey + <span class="string">"':'"</span> + message
+                + <span class="string">"'"</span>);
+    }
+}
+</code></pre><h3 id="生产者">生产者</h3>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) throws Exception {
+    ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();
+    factory.setHost(<span class="string">"127.0.0.1"</span>);
+    factory.setPort(<span class="number">5672</span>);
+    factory.setUsername(<span class="string">"guest"</span>);
+    factory.setPassword(<span class="string">"guest"</span>);
+
+    Connection connection = factory.newConnection();
+    Channel channel = connection.createChannel();
+
+    channel.queueDeclare(<span class="string">"MsgTopic"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);
+    channel.basicPublish(<span class="string">"MsgTopic"</span>, <span class="string">"8"</span>, <span class="keyword">null</span>, <span class="string">"Hello World!"</span>.getBytes());
+    System.<span class="keyword">out</span>.println(<span class="string">" [x] Sent '"</span> + message + <span class="string">"'"</span>);
+
+    channel.close();
+    connection.close();
+}
+</code></pre><h3 id="可配置的消费者">可配置的消费者</h3>
+<p>配置文件：</p>
+<pre><code><span class="pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">rmqReceiveCfg</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">recevieQueue</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">exchangeName</span>&gt;</span>MsgTopic<span class="tag">&lt;/<span class="title">exchangeName</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">queueName</span>&gt;</span>alarmQueue<span class="tag">&lt;/<span class="title">queueName</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.blackcrystalinfo.push.parser.impl.AlarmMsgParser
+        <span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>8<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">recevieQueue</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">recevieQueue</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">exchangeName</span>&gt;</span>MsgTopic<span class="tag">&lt;/<span class="title">exchangeName</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">queueName</span>&gt;</span>upgradeQueue<span class="tag">&lt;/<span class="title">queueName</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.blackcrystalinfo.push.parser.impl.UpgradeMsgParser
+        <span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>9<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>10<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">recevieQueue</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">recevieQueue</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">exchangeName</span>&gt;</span>MsgTopic<span class="tag">&lt;/<span class="title">exchangeName</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">queueName</span>&gt;</span>allQueue<span class="tag">&lt;/<span class="title">queueName</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">msgParser</span>&gt;</span>com.blackcrystalinfo.push.parser.impl.UpgradeMsgParser
+        <span class="tag">&lt;/<span class="title">msgParser</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">routeKey</span>&gt;</span>#<span class="tag">&lt;/<span class="title">routeKey</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">recevieQueue</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">rmqReceiveCfg</span>&gt;</span>
+</code></pre><p>对应的配置类：</p>
+<pre><code><span class="keyword">package</span> com.blackcrystalinfo.push.test;
+
+<span class="keyword">import</span> java.io.InputStream;
+<span class="keyword">import</span> java.util.List;
+
+<span class="keyword">import</span> javax.xml.bind.JAXB;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RmqReceiveCfg</span> </span>{
+
+    <span class="keyword">private</span> <span class="keyword">static</span> RmqReceiveCfg instance;
+    <span class="keyword">private</span> List&lt;RecevieQueue&gt; recevieQueue;
+
+    <span class="keyword">public</span> <span class="keyword">static</span> RmqReceiveCfg <span class="title">getInstance</span>() {
+        <span class="keyword">if</span> (<span class="keyword">null</span> != instance) {
+            <span class="keyword">return</span> instance;
+        }
+
+        <span class="keyword">return</span> createRmqReceiveCfg();
+    }
+
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> RmqReceiveCfg <span class="title">createRmqReceiveCfg</span>() {
+
+        <span class="keyword">if</span> (instance != <span class="keyword">null</span>) {
+            <span class="keyword">return</span> instance;
+        }
+
+        InputStream is = ClassLoader.getSystemResourceAsStream(<span class="string">"tmp2.xml"</span>);
+        instance = JAXB.unmarshal(is, RmqReceiveCfg.class);
+        <span class="keyword">return</span> instance;
+    }
+
+    <span class="keyword">public</span> List&lt;RecevieQueue&gt; <span class="title">getRecevieQueue</span>() {
+        <span class="keyword">return</span> recevieQueue;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRecevieQueue</span>(List&lt;RecevieQueue&gt; recevieQueue) {
+        <span class="keyword">this</span>.recevieQueue = recevieQueue;
+    }
+
+    <span class="keyword">static</span> class RecevieQueue {
+        <span class="keyword">private</span> String exchangeName;
+
+        <span class="keyword">private</span> String queueName;
+
+        <span class="keyword">private</span> String msgParser;
+
+        <span class="keyword">private</span> List&lt;String&gt; routeKey;
+
+        <span class="keyword">public</span> String <span class="title">getExchangeName</span>() {
+            <span class="keyword">return</span> exchangeName;
+        }
+
+        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setExchangeName</span>(String exchangeName) {
+            <span class="keyword">this</span>.exchangeName = exchangeName;
+        }
+
+        <span class="keyword">public</span> String <span class="title">getQueueName</span>() {
+            <span class="keyword">return</span> queueName;
+        }
+
+        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQueueName</span>(String queueName) {
+            <span class="keyword">this</span>.queueName = queueName;
+        }
+
+        <span class="keyword">public</span> String <span class="title">getMsgParser</span>() {
+            <span class="keyword">return</span> msgParser;
+        }
+
+        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMsgParser</span>(String msgParser) {
+            <span class="keyword">this</span>.msgParser = msgParser;
+        }
+
+        <span class="keyword">public</span> List&lt;String&gt; <span class="title">getRouteKey</span>() {
+            <span class="keyword">return</span> routeKey;
+        }
+
+        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRouteKey</span>(List&lt;String&gt; routeKey) {
+            <span class="keyword">this</span>.routeKey = routeKey;
+        }
+
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+        RmqReceiveCfg cfg = RmqReceiveCfg.getInstance();
+        System.out.println(cfg);
+    }
+}
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/工作积累/">工作积累</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RabbitMq/">RabbitMq</a>
+  </div>
+
+</div>
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://blog.erhsh.com/2014/11/03/20141103_rabbitmq-java-cli/" data-title="RabbitMq之java实战 | Erhsh Blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/11/03/stack-edit-example/"  title="">
+ <strong>下一篇：</strong><br/> 
+ <span>(no title)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMq之java实战"><span class="toc-number">1.</span> <span class="toc-text">RabbitMq之java实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消费者"><span class="toc-number">1.1.</span> <span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生产者"><span class="toc-number">1.2.</span> <span class="toc-text">生产者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可配置的消费者"><span class="toc-number">1.3.</span> <span class="toc-text">可配置的消费者</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/工作积累/" title="工作积累">工作积累<sup>1</sup></a></li>
+		
+			<li><a href="/categories/教程技术/" title="教程技术">教程技术<sup>1</sup></a></li>
+		
+			<li><a href="/categories/环境搭建/" title="环境搭建">环境搭建<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/RabbitMq/" title="RabbitMq">RabbitMq<sup>1</sup></a></li>
+		
+			<li><a href="/tags/涨技能/" title="涨技能">涨技能<sup>1</sup></a></li>
+		
+			<li><a href="/tags/瞎扯淡/" title="瞎扯淡">瞎扯淡<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+      <li><a href="http://wuchong.me" target="_blank" title="WuChong">Jark's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2014 
+		
+		<a href="http://blog.erhsh.com/about" target="_blank" title="erhsh">erhsh</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"erhsh"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+
+
+<div id="totop">
+<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+</div>
+
+<script src="/js/totop.js"></script>
+
+
+
+
+  </body>
+</html>
