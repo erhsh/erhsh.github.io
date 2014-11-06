@@ -72,7 +72,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/03/20141103_rabbitmq-java-cli/" title="RabbitMq之java实战" itemprop="url">RabbitMq之java实战</a>
+      <a href="/2014/11/03/2014-11-03_rabbitmq-java-cli/" title="RabbitMq之java实战" itemprop="url">RabbitMq之java实战</a>
   </h1>
   <p class="article-author">By
        
@@ -89,12 +89,12 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMq之java实战"><span class="toc-number">1.</span> <span class="toc-text">RabbitMq之java实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消费者"><span class="toc-number">1.1.</span> <span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生产者"><span class="toc-number">1.2.</span> <span class="toc-text">生产者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可配置的消费者"><span class="toc-number">1.3.</span> <span class="toc-text">可配置的消费者</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RabbitMq之java实战"><span class="toc-number">1.</span> <span class="toc-text">RabbitMq之java实战</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#消费者"><span class="toc-number">1.1.</span> <span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生产者"><span class="toc-number">1.2.</span> <span class="toc-text">生产者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可配置的消费者"><span class="toc-number">1.3.</span> <span class="toc-text">可配置的消费者</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h2 id="RabbitMq之java实战">RabbitMq之java实战</h2>
-<h3 id="消费者">消费者</h3>
+		<h1 id="RabbitMq之java实战">RabbitMq之java实战</h1>
+<h2 id="消费者">消费者</h2>
 <pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) throws Exception {
     <span class="comment">// 建立连接，得到channel：</span>
     ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();
@@ -140,7 +140,7 @@
                 + <span class="string">"'"</span>);
     }
 }
-</code></pre><h3 id="生产者">生产者</h3>
+</code></pre><h2 id="生产者">生产者</h2>
 <pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) throws Exception {
     ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();
     factory.setHost(<span class="string">"127.0.0.1"</span>);
@@ -161,7 +161,7 @@
     channel.close();
     connection.close();
 }
-</code></pre><h3 id="可配置的消费者">可配置的消费者</h3>
+</code></pre><h2 id="可配置的消费者">可配置的消费者</h2>
 <p>配置文件：</p>
 <pre><code><span class="pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="tag">&lt;<span class="title">rmqReceiveCfg</span>&gt;</span>
@@ -294,7 +294,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/03/20141103_rabbitmq-java-cli/" data-title="RabbitMq之java实战 | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/2014/11/03/2014-11-03_rabbitmq-java-cli/" data-title="RabbitMq之java实战 | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -313,9 +313,9 @@
 
 
 <div class="next">
-<a href="/2014/11/03/stack-edit-example/"  title="">
+<a href="/2014/11/03/2014-11-03_stack-edit-example/"  title="Welcome to StackEdit!">
  <strong>下一篇：</strong><br/> 
- <span>(no title)
+ <span>Welcome to StackEdit!
 </span>
 </a>
 </div>
@@ -334,7 +334,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMq之java实战"><span class="toc-number">1.</span> <span class="toc-text">RabbitMq之java实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消费者"><span class="toc-number">1.1.</span> <span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生产者"><span class="toc-number">1.2.</span> <span class="toc-text">生产者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可配置的消费者"><span class="toc-number">1.3.</span> <span class="toc-text">可配置的消费者</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RabbitMq之java实战"><span class="toc-number">1.</span> <span class="toc-text">RabbitMq之java实战</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#消费者"><span class="toc-number">1.1.</span> <span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生产者"><span class="toc-number">1.2.</span> <span class="toc-text">生产者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可配置的消费者"><span class="toc-number">1.3.</span> <span class="toc-text">可配置的消费者</span></a></li></ol></li></ol>
  
   </div>
 
@@ -351,9 +351,9 @@
 		
 			<li><a href="/categories/工作积累/" title="工作积累">工作积累<sup>1</sup></a></li>
 		
-			<li><a href="/categories/教程技术/" title="教程技术">教程技术<sup>1</sup></a></li>
+			<li><a href="/categories/教程技术/" title="教程技术">教程技术<sup>2</sup></a></li>
 		
-			<li><a href="/categories/环境搭建/" title="环境搭建">环境搭建<sup>1</sup></a></li>
+			<li><a href="/categories/环境搭建/" title="环境搭建">环境搭建<sup>2</sup></a></li>
 		
 		</ul>
 </div>
@@ -364,13 +364,15 @@
 	<p class="asidetitle">Tags</p>
 		<ul class="clearfix">
 		
+			<li><a href="/tags/涨技能/" title="涨技能">涨技能<sup>2</sup></a></li>
+		
 			<li><a href="/tags/ofbiz-待完善/" title="ofbiz 待完善">ofbiz 待完善<sup>1</sup></a></li>
 		
-			<li><a href="/tags/瞎扯淡/" title="瞎扯淡">瞎扯淡<sup>1</sup></a></li>
-		
-			<li><a href="/tags/涨技能/" title="涨技能">涨技能<sup>1</sup></a></li>
+			<li><a href="/tags/markdown语法/" title="markdown语法">markdown语法<sup>1</sup></a></li>
 		
 			<li><a href="/tags/RabbitMq/" title="RabbitMq">RabbitMq<sup>1</sup></a></li>
+		
+			<li><a href="/tags/瞎扯淡/" title="瞎扯淡">瞎扯淡<sup>1</sup></a></li>
 		
 		</ul>
 </div>
