@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>折腾了好几天，还好最终有那么点意思。 | Erhsh Blog</title>
+    <title>Ofbiz 实体引擎 | Erhsh Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="erhsh">
     
-    <meta name="description" itemprop="description" content="今个礼拜天，阳光明媚，心情大好，于是赶脚写点什么东西来记录一下。。。">
+    <meta name="description" itemprop="description" content="实 体引擎的一个主要目标是尽可能的提供一种通用的代码结构">
     
     
     
@@ -72,14 +72,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/02/2014-11-02_my-first-blog-on-github/" title="折腾了好几天，还好最终有那么点意思。" itemprop="url">折腾了好几天，还好最终有那么点意思。</a>
+      <a href="/2014/11/06/2014-11-06_ofbiz-learn-start-2/" title="Ofbiz 实体引擎" itemprop="url">Ofbiz 实体引擎</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-02T08:02:16.000Z" itemprop="datePublished"> Published 11月 2 2014</time>
+    <time datetime="2014-11-06T07:00:56.000Z" itemprop="datePublished"> Published 11月 6 2014</time>
     
   </p>
 </header>
@@ -89,31 +89,17 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#博客目录规划"><span class="toc-number">2.</span> <span class="toc-text">博客目录规划</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h3 id="前言">前言</h3>
-<p>也不知道该写点啥，既然都开了博客了，不写也就说不过去，但真让我写点东西，还是有很大难度的，至少现在是。 写点什么呢？看了看别人的博客，开头大概几乎都是解释为什么开博客，感觉理由跟他们差不多，所以也没必要啰嗦一堆，写就写。这东西没好坏之分，写的东西最主要还是给将来的自己看，别人能不能看，无所谓。</p>
-<h3 id="博客目录规划">博客目录规划</h3>
-<p>分类分为：</p>
-<ul>
-<li>环境搭建</li>
-<li>教程技术</li>
-<li>优秀博文</li>
-<li>工作涉及</li>
-<li>日常生活</li>
-<li>文学杂谈</li>
-<li>唾沫横飞</li>
-</ul>
-<p>标签分类：</p>
-<ul>
-<li>感兴趣</li>
-<li>涨技能</li>
-<li>拓眼见</li>
-<li>大数据</li>
-<li>瞎扯淡</li>
-</ul>
+		<p>可以肯定的是ofbiz可以实现任何复杂逻辑的系统，ofbiz的实体引擎把数据库操作权留给开发者，开发者可以按照自己的需要，任意设计表，所谓的实体引擎，提供了用户xml与数据库直接的映射功能。</p>
+<p>参考依据：<a href="http://jiasudu.iteye.com/blog/103779" target="_blank" rel="external">http://jiasudu.iteye.com/blog/103779</a></p>
+<p>实 体引擎的一个主要目标是尽可能的提供一种通用的代码结构，来消除在针对每一个实体的事物处理过程中，所有写死（hard code）的代码。 这种系统抽象所关注的问题，与那些把数据从数据库中提取出来，并以报表的形式进行输出和显示处理的报表管理或类似系统是不同的，而是类似于每日都可能发生 很多事物处理的商业应用系统，实体引擎能大量节省构建类似应用系统的开发费用和戏剧性的减少因为系统存在大量写死的事务处理代码所产生的bug。这种类型 的应用系统目前在OFBIZ中实现了一些，如<strong>电子商务，入库、出库的帐目管理，任务分配资源管理</strong>等等。这些工具能够用来报告和分析系统，但是并不意味着， 它能包容<strong>千差万别的客户的应用需求</strong>，在实际应用中，我们可以基于它来做一些 <strong>二次开发</strong>。消息</p>
+<p>实体引擎和服务引擎各有利弊，在实际应用中，可以把服务引 擎和实体引擎结合起来使用，实体引擎主要用于处理实体（Entities）对象的增、删、改、查，服务引擎主要用于处理商务逻辑，这种商务逻辑的定义范 围，不大会遇到上面所说的要求一次查询返回一个结果集这样的服务定义（这完全可以用实体引擎来处理）。<br>服务引擎可以用处理跨平台、跨操作系统、跨应用系统之间的业务逻辑。<strong>把实体引擎和服务引擎结合起来，可以这解决企业级Web应用系统的绝大部分需求所涉及到的技术实现细节</strong>。</p>
+<p>店铺角色设置：<br>把一个会员与一个店铺关联在一起，成为销售人员。<br><a href="http://wenku.baidu.com/view/4d1fe869a45177232f60a230.html" target="_blank" rel="external">http://wenku.baidu.com/view/4d1fe869a45177232f60a230.html</a></p>
+<p>供货商新增：<br>在团体中创建新人员，然后在新人员角色中选取供货商<br><a href="http://wenku.baidu.com/view/eede77f0bb4cf7ec4bfed027.html" target="_blank" rel="external">http://wenku.baidu.com/view/eede77f0bb4cf7ec4bfed027.html</a>    </p>
+<p><a href="http://wenku.baidu.com/view/f6f3852e915f804d2b16c13d.html" target="_blank" rel="external">http://wenku.baidu.com/view/f6f3852e915f804d2b16c13d.html</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -121,13 +107,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/环境搭建/">环境搭建</a>
+  <a class="article-category-link" href="/categories/Ofbiz学习/">Ofbiz学习</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/瞎扯淡/">瞎扯淡</a>
+  <span></span> <a href="/tags/ofbiz-待完善/">ofbiz 待完善</a>
   </div>
 
 </div>
@@ -135,7 +121,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/02/2014-11-02_my-first-blog-on-github/" data-title="折腾了好几天，还好最终有那么点意思。 | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/2014/11/06/2014-11-06_ofbiz-learn-start-2/" data-title="Ofbiz 实体引擎 | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -144,19 +130,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/11/02/2014-11-02_do-some-thing-diff/" title="花样。">
-  <strong>上一篇：</strong><br/>
-  <span>
-  花样。</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/1970/01/01/1970-01-01_template/"  title="这里是文章标题">
+<a href="/2014/11/05/2014-11-05_ofbiz-learn-start-1/"  title="Ofbiz 初期调研">
  <strong>下一篇：</strong><br/> 
- <span>这里是文章标题
+ <span>Ofbiz 初期调研
 </span>
 </a>
 </div>
@@ -175,7 +153,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#博客目录规划"><span class="toc-number">2.</span> <span class="toc-text">博客目录规划</span></a></li></ol>
+ 
  
   </div>
 
