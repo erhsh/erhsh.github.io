@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>花样。 | Erhsh Blog</title>
+    <title>Php连接Mysql性能提升&lt;br/&gt; | Erhsh Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="erhsh">
     
-    <meta name="description" itemprop="description" content="测试一下markdown写作技巧。">
+    <meta name="description" itemprop="description" content="方便自己&lt;br/&gt;">
     
     
     
@@ -72,14 +72,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/02/2014-11-02_do-some-thing-diff/" title="花样。" itemprop="url">花样。</a>
+      <a href="/2014/11/11/2014-11-12_default/" title="Php连接Mysql性能提升&lt;br/&gt;" itemprop="url">Php连接Mysql性能提升&lt;br/&gt;</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-02T14:55:16.000Z" itemprop="datePublished"> Published 11月 2 2014</time>
+    <time datetime="2014-11-11T04:00:00.000Z" itemprop="datePublished"> Published 11月 11 2014</time>
     
   </p>
 </header>
@@ -89,31 +89,60 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#技巧收集"><span class="toc-number">1.</span> <span class="toc-text">技巧收集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#插入图片"><span class="toc-number">1.1.</span> <span class="toc-text">插入图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入代码块"><span class="toc-number">1.2.</span> <span class="toc-text">插入代码块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超链接"><span class="toc-number">1.3.</span> <span class="toc-text">超链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#当前时间"><span class="toc-number">1.4.</span> <span class="toc-text">当前时间</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL表的Engine该设置成MyISAM还是InnoDB"><span class="toc-number">1.</span> <span class="toc-text">MySQL表的Engine该设置成MyISAM还是InnoDB</span></a></li></ol>
 		
 		</div>
 		
-		<h1 id="技巧收集">技巧收集</h1>
-<h2 id="插入图片">插入图片</h2>
-<p><img src="http://blog.erhsh.com/img/author.jpg" alt="head img"></p>
-<h2 id="插入代码块">插入代码块</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var myLife = new Life();</div><div class="line">var name = myLife.name(); // cj</div><div class="line">var age = myLife.age; // defautl <span class="number">26</span></div><div class="line">...</div></pre></td></tr></table></figure>
-
-<p>Here is java code:</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>() {
-    system.<span class="keyword">out</span>.print(<span class="string">"hello world"</span>);
-}
-</code></pre><p>Here is HTML code:</p>
-<pre><code><span class="tag">&lt;<span class="title">div</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">p</span>&gt;</span>
-        <span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">"http://blog.erhsh.com/img/author.jpg"</span>/&gt;</span>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore, iusto, eos, recusandae qui impedit blanditiis libero in accusamus necessitatibus repellendus porro quae inventore unde non voluptate iste nesciunt aut quis.
-    <span class="tag">&lt;/<span class="title">p</span>&gt;</span>
-<span class="tag">&lt;<span class="title">div</span>&gt;</span>
-</code></pre><h2 id="超链接">超链接</h2>
-<p>访问我的<a href="http://www.erhsh.com" title="My Site" target="_blank" rel="external">主页</a></p>
-<h2 id="当前时间">当前时间</h2>
-<p>11/2/2014 11:21:16 PM </p>
+		<h2 id="MySQL表的Engine该设置成MyISAM还是InnoDB">MySQL表的Engine该设置成MyISAM还是InnoDB</h2>
+<p>先来看MySQL一下几个命令：</p>
+<ul>
+<li>查看你数据库的版本，不同版本之间还是会有区别的: <code>select version();</code></li>
+<li>查看数据库提供的存储引擎：<code>show engines;</code> </li>
+<li>查看数据库默认的存储引擎：<code>show variables like &#39;%engine%&#39;;</code></li>
+<li>查看某张表使用的存储引擎：<code>show create table table_name;</code> or <code>show table status from db_name where name = table_name;</code></li>
+<li>修改某张表使用的存储引擎：<code>alter table table_name engine=InnoDB;</code></li>
+<li>查看数据库当前连接状态：<code>show processlist;</code></li>
+<li>查看数据库最大连接数：<code>show global variables like &#39;max_connections&#39;;</code></li>
+<li>查看数据库等待超时时间：<code>show global variables like &#39;wait_timeout&#39;;</code></li>
+</ul>
+<p>再来看下php以fpm方式启动cgi的配置：</p>
+<ul>
+<li>进程管理器的运行方式：<code>pm = static|dynamic|ondemand</code></li>
+<li>最大子进程数：<code>pm.max_children = 100</code></li>
+<li>在动态运行下的配置：<code>pm.start_servers = 20; pm.min_spare_servers = 10;pm.max_spare_servers = 30;</code></li>
+</ul>
+<p>再说一下php使用PDO方式连接mysql的两种方式：</p>
+<ul>
+<li>持久连接：<code>PDO::ATTR_PERSISTENT =&gt; true</code></li>
+<li>短链接：<code>PDO::ATTR_PERSISTENT =&gt; false</code></li>
+</ul>
+<p>遇到的问题：</p>
+<p>情景一</p>
+<ol>
+<li>php使用静态方式启动，启动100个子进程。</li>
+<li>php使用长链接方式与MySql连接。</li>
+<li>MySQL最大连接数：50</li>
+<li>MySQL超时时间：28800s</li>
+</ol>
+<p>遇到问题：</p>
+<p>调用php提供的接口（涉及到MySQL连接）50次+，php就会容易出现 <code>Too many connections...</code> 的错误。<br>出现的原因是：</p>
+<ol>
+<li>php使用了长连接:</li>
+</ol>
+<p>情况1：</p>
+<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程不持有MySQL的连接，php向MySQL申请建立连接；<br>MySQL一瞧，你已经有50个进程跟我保持连接了，不能建立，原因是：<code>Too many connections</code>；</p>
+<p>情况2：</p>
+<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程持有MySQL的连接，且连接有效（连接的sleep时间小于wait_timeout）。<br>使用该连接，连接MySQL, ok。</p>
+<p>情况3：</p>
+<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程持有MySQL的连接，但连接无效（连接的sleep时间大于wait_timeout）。<br>使用该连接，连接MySQL, failed, 提示：<code>MySQL has gone away</code>。<br>新建连接，连接MySQL，ok。</p>
+<ol>
+<li>使用短链接</li>
+</ol>
+<p>情况1：</p>
+<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>进程不持有MySQL的连接，申请与MySQL建立连接。<br>MySQL当前连接数小于最大连接数max_connections，连接ok。</p>
+<p>情况2：</p>
+<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>进程不持有MySQL的连接，申请与MySQL建立连接。<br>MySQL当前连接数等于最大连接数max_connections，连接failed。<br>（出现这种情况的可能性非常小，短链接用完之后马上断掉，不会占用连接的，要是真的出现了，只能通过1：排查代码，看是否某个逻辑占用很长时间的连接，2，增大max_connections）</p>
+<p>当请求分发给未与MySQL建立连接的</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -121,13 +150,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/教程技术/">教程技术</a>
+  <a class="article-category-link" href="/categories/教程技术-br/">教程技术<br/></a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/涨技能/">涨技能</a>
+  <span></span> <a href="/tags/涨技能-br/">涨技能<br/></a>
   </div>
 
 </div>
@@ -135,7 +164,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/02/2014-11-02_do-some-thing-diff/" data-title="花样。 | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/2014/11/11/2014-11-12_default/" data-title="Php连接Mysql性能提升&lt;br/&gt; | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -145,18 +174,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/11/03/2014-11-03_stack-edit-example/" title="Welcome to StackEdit!">
+ <a href="/2014/11/11/2014-11-11_default/" title="UML的各种箭头&lt;br/&gt;">
   <strong>上一篇：</strong><br/>
   <span>
-  Welcome to StackEdit!</span>
+  UML的各种箭头&lt;br/&gt;</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/11/02/2014-11-02_my-first-blog-on-github/"  title="折腾了好几天，还好最终有那么点意思。">
+<a href="/2014/11/10/2014-11-10_default/"  title="这里是文章标题">
  <strong>下一篇：</strong><br/> 
- <span>折腾了好几天，还好最终有那么点意思。
+ <span>这里是文章标题
 </span>
 </a>
 </div>
@@ -175,7 +204,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#技巧收集"><span class="toc-number">1.</span> <span class="toc-text">技巧收集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#插入图片"><span class="toc-number">1.1.</span> <span class="toc-text">插入图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入代码块"><span class="toc-number">1.2.</span> <span class="toc-text">插入代码块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超链接"><span class="toc-number">1.3.</span> <span class="toc-text">超链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#当前时间"><span class="toc-number">1.4.</span> <span class="toc-text">当前时间</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL表的Engine该设置成MyISAM还是InnoDB"><span class="toc-number">1.</span> <span class="toc-text">MySQL表的Engine该设置成MyISAM还是InnoDB</span></a></li></ol>
  
   </div>
 
