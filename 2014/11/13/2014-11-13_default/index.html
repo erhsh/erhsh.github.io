@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Php连接Mysql性能提升&lt;br/&gt; | Erhsh Blog</title>
+    <title>Java推送服务器设计 | Erhsh Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="erhsh">
@@ -72,14 +72,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/11/2014-11-12_default/" title="Php连接Mysql性能提升&lt;br/&gt;" itemprop="url">Php连接Mysql性能提升&lt;br/&gt;</a>
+      <a href="/2014/11/13/2014-11-13_default/" title="Java推送服务器设计" itemprop="url">Java推送服务器设计</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-11T04:00:00.000Z" itemprop="datePublished"> Published 11月 11 2014</time>
+    <time datetime="2014-11-13T04:47:00.000Z" itemprop="datePublished"> Published 11月 13 2014</time>
     
   </p>
 </header>
@@ -89,94 +89,38 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL表的Engine该设置成MyISAM还是InnoDB"><span class="toc-number">1.</span> <span class="toc-text">MySQL表的Engine该设置成MyISAM还是InnoDB</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求描述"><span class="toc-number">1.</span> <span class="toc-text">需求描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#架构设计"><span class="toc-number">2.</span> <span class="toc-text">架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EPC事件过程链"><span class="toc-number">2.0.1.</span> <span class="toc-text">EPC事件过程链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#流程图"><span class="toc-number">2.0.2.</span> <span class="toc-text">流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#类图"><span class="toc-number">2.0.3.</span> <span class="toc-text">类图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#包图"><span class="toc-number">2.0.4.</span> <span class="toc-text">包图</span></a></li></ol></li></ol></li></ol>
 		
 		</div>
 		
-		<h2 id="MySQL表的Engine该设置成MyISAM还是InnoDB">MySQL表的Engine该设置成MyISAM还是InnoDB</h2>
-<p>先来看MySQL一下几个命令：</p>
-<ul>
-<li>查看你数据库的版本，不同版本之间还是会有区别的: <code>select version();</code></li>
-<li>查看数据库提供的存储引擎：<code>show engines;</code> </li>
-<li>查看数据库默认的存储引擎：<code>show variables like &#39;%engine%&#39;;</code></li>
-<li>查看某张表使用的存储引擎：<code>show create table table_name;</code> or <code>show table status from db_name where name = table_name;</code></li>
-<li>修改某张表使用的存储引擎：<code>alter table table_name engine=InnoDB;</code></li>
-<li>查看数据库当前连接状态：<code>show processlist;</code></li>
-<li>查看数据库最大连接数：<code>show global variables like &#39;max_connections&#39;;</code></li>
-<li>查看数据库等待超时时间：<code>show global variables like &#39;wait_timeout&#39;;</code></li>
-</ul>
-<p>再来看下php以fpm方式启动cgi的配置：</p>
-<ul>
-<li>进程管理器的运行方式：<code>pm = static|dynamic|ondemand</code></li>
-<li>最大子进程数：<code>pm.max_children = 100</code></li>
-<li>在动态运行下的配置：<code>pm.start_servers = 20; pm.min_spare_servers = 10;pm.max_spare_servers = 30;</code></li>
-</ul>
-<p>再说一下php使用PDO方式连接mysql的两种方式：</p>
-<ul>
-<li>持久连接：<code>PDO::ATTR_PERSISTENT =&gt; true</code></li>
-<li>短链接：<code>PDO::ATTR_PERSISTENT =&gt; false</code></li>
-</ul>
-<p>遇到的问题：</p>
-<p>情景一</p>
-<ol>
-<li>php使用静态方式启动，启动100个子进程。</li>
-<li>php使用长链接方式与MySql连接。</li>
-<li>MySQL最大连接数：50</li>
-<li>MySQL超时时间：28800s</li>
-</ol>
-<p>遇到问题：</p>
-<p>调用php提供的接口（涉及到MySQL连接）50次+，php就会容易出现 <code>Too many connections...</code> 的错误。<br>出现的原因是：</p>
-<ol>
-<li>php使用了长连接:</li>
-</ol>
-<p>情况1：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程不持有MySQL的连接，php向MySQL申请建立连接；<br>MySQL一瞧，你已经有50个进程跟我保持连接了，不能建立，原因是：<code>Too many connections</code>；</p>
-<p>情况2：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程持有MySQL的连接，且连接有效（连接的sleep时间小于wait_timeout）。<br>使用该连接，连接MySQL, ok。</p>
-<p>情况3：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程持有MySQL的连接，但连接无效（连接的sleep时间大于wait_timeout）。<br>使用该连接，连接MySQL, failed, 提示：<code>MySQL has gone away</code>。<br>新建连接，连接MySQL，ok。</p>
-<ol>
-<li>使用短链接</li>
-</ol>
-<p>情况1：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>进程不持有MySQL的连接，申请与MySQL建立连接。<br>MySQL当前连接数小于最大连接数max_connections，连接ok。</p>
-<p>情况2：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>进程不持有MySQL的连接，申请与MySQL建立连接。<br>MySQL当前连接数等于最大连接数max_connections，连接failed。<br>（出现这种情况的可能性非常小，短链接用完之后马上断掉，不会占用连接的，<br>要是真的出现了，只能通过<br>1:排查代码，看是否某个逻辑占用很长时间，导致连接不能被马上释放<br>2:增大max_connections）</p>
-<ol>
-<li>经验之谈</li>
-</ol>
-<p>选择长连接还是短连接？</p>
-<p>开发阶段先用短连接</p>
-<p>因为，</p>
-<ol>
-<li>短连接就是用的时候随时取，用完了马上归还，不会出现状态为sleep的连接，所以不用考虑配置wait_timeout用60s呢还是8h，都一样，没用。</li>
-<li>配置php的最大子进程数pm.max_children 与 MySQL的最大连接数max_connections比较容易，只需pm.max_children &lt; max_connections即可。</li>
-</ol>
-<p>等到项目运行稳定了，在做性能调优时再考虑是否使用长连接。</p>
-<p>因为：</p>
-<ol>
-<li>长连接不用频繁的与MySQL建立连接，理论上性能会提升很多。</li>
-</ol>
-<p>pm.max_children越少，wait_timeout越长，调用越频繁的情况下，长连接的优势越明显。</p>
-<p>相反，则会导致php连接MySQL时，提示<code>MySQL has gone away.</code></p>
-<p>这种情况下，到底该怎么配置pm.max_children与wait_timeout。<br>pm.max_children可以并发处理的请求数，要想提高并发访问，该值必须大。<br>pm.wait_timeout也不能太长了，不管设置多长，设置成24h，如果两天调用一次api，还会报<code>MySQL has gone away.</code><br>至于调用频繁不频繁，那就看客户心情了。 </p>
-<p>因此说长连接下报<code>MySQL has gone away.</code>是在所难免的，不过这是php的warn级别的打印，可以通过配置日志级别屏蔽。</p>
-<p>综合上述情况，要是长连接真的比短连接性能提升1个数量级以上，那就用长连接+提高日志级别来优化性能，否则，还是用短连接吧，配置简单不易出错。</p>
-<p>当请求分发给未与MySQL建立连接的</p>
-  
+		<h2 id="需求描述">需求描述</h2>
+<p>智能设备，如摄像头，烟感传感器等某些情况下触发报警，系统接收报警信息，然后解析，然后推送给用户。</p>
+<h2 id="架构设计">架构设计</h2>
+<h4 id="EPC事件过程链">EPC事件过程链</h4>
+<iframe id="embed_dom" name="embed_dom" frameborder="0" style="border:1px solid #000;display:block;width:700px; height:450px;" src="http://www.processon.com/embed/54642462e4b054d6db96ce59"></iframe>
+
+<h4 id="流程图">流程图</h4>
+<iframe id="embed_dom" name="embed_dom" frameborder="0" style="border:1px solid #000;display:block;width:700px; height:450px;" src="http://www.processon.com/embed/54641912e4b0589dc9790c98"></iframe>
+
+<h4 id="类图">类图</h4>
+<iframe id="embed_dom" name="embed_dom" frameborder="0" style="border:1px solid #000;display:block;width:700px; height:450px;" src="http://www.processon.com/embed/54641713e4b054d6db968929"></iframe>
+
+
+<h4 id="包图">包图</h4>
+<iframe id="embed_dom" name="embed_dom" frameborder="0" style="border:1px solid #000;display:block;width:700px; height:450px;" src="http://www.processon.com/embed/54641713e4b054d6db968929"></iframe>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/教程技术-br/">教程技术<br/></a>
+  <a class="article-category-link" href="/categories/工作积累-br/">工作积累<br/></a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/涨技能-br/">涨技能<br/></a>
+  <span></span> <a href="/tags/push-app-br/">push-app<br/></a>
   </div>
 
 </div>
@@ -184,7 +128,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/11/2014-11-12_default/" data-title="Php连接Mysql性能提升&lt;br/&gt; | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/2014/11/13/2014-11-13_default/" data-title="Java推送服务器设计 | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -193,19 +137,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/11/11/2014-11-11_default/" title="UML的各种箭头&lt;br/&gt;">
-  <strong>上一篇：</strong><br/>
-  <span>
-  UML的各种箭头&lt;br/&gt;</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/11/10/2014-11-10_default/"  title="这里是文章标题">
+<a href="/2014/11/11/2014-11-11_default/"  title="UML的各种箭头&lt;br/&gt;">
  <strong>下一篇：</strong><br/> 
- <span>这里是文章标题
+ <span>UML的各种箭头&lt;br/&gt;
 </span>
 </a>
 </div>
@@ -224,7 +160,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL表的Engine该设置成MyISAM还是InnoDB"><span class="toc-number">1.</span> <span class="toc-text">MySQL表的Engine该设置成MyISAM还是InnoDB</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求描述"><span class="toc-number">1.</span> <span class="toc-text">需求描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#架构设计"><span class="toc-number">2.</span> <span class="toc-text">架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EPC事件过程链"><span class="toc-number">2.0.1.</span> <span class="toc-text">EPC事件过程链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#流程图"><span class="toc-number">2.0.2.</span> <span class="toc-text">流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#类图"><span class="toc-number">2.0.3.</span> <span class="toc-text">类图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#包图"><span class="toc-number">2.0.4.</span> <span class="toc-text">包图</span></a></li></ol></li></ol></li></ol>
  
   </div>
 
