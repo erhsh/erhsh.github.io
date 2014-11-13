@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Php连接Mysql性能提升&lt;br/&gt; | Erhsh Blog</title>
+    <title>Php连接Mysql性能提升 | Erhsh Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="erhsh">
     
-    <meta name="description" itemprop="description" content="方便自己&lt;br/&gt;">
+    <meta name="description" itemprop="description" content="方便自己">
     
     
     
@@ -72,14 +72,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/11/2014-11-12_default/" title="Php连接Mysql性能提升&lt;br/&gt;" itemprop="url">Php连接Mysql性能提升&lt;br/&gt;</a>
+      <a href="/2014/11/12/2014-11-12_default/" title="Php连接Mysql性能提升" itemprop="url">Php连接Mysql性能提升</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-11T04:00:00.000Z" itemprop="datePublished"> Published 11月 11 2014</time>
+    <time datetime="2014-11-12T04:30:00.000Z" itemprop="datePublished"> Published 11月 12 2014</time>
     
   </p>
 </header>
@@ -89,12 +89,13 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL表的Engine该设置成MyISAM还是InnoDB"><span class="toc-number">1.</span> <span class="toc-text">MySQL表的Engine该设置成MyISAM还是InnoDB</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前期准备"><span class="toc-number">1.</span> <span class="toc-text">前期准备</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL命令"><span class="toc-number">1.1.</span> <span class="toc-text">MySQL命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php启动参数配置"><span class="toc-number">1.2.</span> <span class="toc-text">php启动参数配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PDO连接"><span class="toc-number">1.3.</span> <span class="toc-text">PDO连接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#遇到的问题"><span class="toc-number">2.</span> <span class="toc-text">遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#长连接_vs_短连接"><span class="toc-number">2.1.</span> <span class="toc-text">长连接 vs 短连接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题描述"><span class="toc-number">2.1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景配置"><span class="toc-number">2.1.2.</span> <span class="toc-text">场景配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原因分析："><span class="toc-number">2.1.3.</span> <span class="toc-text">原因分析：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案"><span class="toc-number">2.1.4.</span> <span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">2.1.5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#如下原则"><span class="toc-number">2.1.5.1.</span> <span class="toc-text">如下原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#问题来了"><span class="toc-number">2.1.5.2.</span> <span class="toc-text">问题来了</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#结论中的结论"><span class="toc-number">2.1.5.3.</span> <span class="toc-text">结论中的结论</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MyISAM_vs_InnoDB"><span class="toc-number">2.2.</span> <span class="toc-text">MyISAM vs InnoDB</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h2 id="MySQL表的Engine该设置成MyISAM还是InnoDB">MySQL表的Engine该设置成MyISAM还是InnoDB</h2>
-<p>先来看MySQL一下几个命令：</p>
+		<h1 id="前期准备">前期准备</h1>
+<h2 id="MySQL命令">MySQL命令</h2>
+<p>下面是必备的几条命令，先罗列出来。</p>
 <ul>
 <li>查看你数据库的版本，不同版本之间还是会有区别的: <code>select version();</code></li>
 <li>查看数据库提供的存储引擎：<code>show engines;</code> </li>
@@ -105,64 +106,97 @@
 <li>查看数据库最大连接数：<code>show global variables like &#39;max_connections&#39;;</code></li>
 <li>查看数据库等待超时时间：<code>show global variables like &#39;wait_timeout&#39;;</code></li>
 </ul>
-<p>再来看下php以fpm方式启动cgi的配置：</p>
+<h2 id="php启动参数配置">php启动参数配置</h2>
+<p>php以fpm方式启动cgi的配置如下：</p>
 <ul>
 <li>进程管理器的运行方式：<code>pm = static|dynamic|ondemand</code></li>
 <li>最大子进程数：<code>pm.max_children = 100</code></li>
 <li>在动态运行下的配置：<code>pm.start_servers = 20; pm.min_spare_servers = 10;pm.max_spare_servers = 30;</code></li>
 </ul>
-<p>再说一下php使用PDO方式连接mysql的两种方式：</p>
+<h2 id="PDO连接">PDO连接</h2>
+<p>php使用PDO方式连接mysql的两种方式：</p>
 <ul>
 <li>持久连接：<code>PDO::ATTR_PERSISTENT =&gt; true</code></li>
 <li>短链接：<code>PDO::ATTR_PERSISTENT =&gt; false</code></li>
 </ul>
-<p>遇到的问题：</p>
-<p>情景一</p>
+<h1 id="遇到的问题">遇到的问题</h1>
+<h2 id="长连接_vs_短连接">长连接 vs 短连接</h2>
+<h3 id="问题描述">问题描述</h3>
+<p>调用php接口，会有3种情况出现：</p>
 <ol>
-<li>php使用静态方式启动，启动100个子进程。</li>
-<li>php使用长链接方式与MySql连接。</li>
-<li>MySQL最大连接数：50</li>
-<li>MySQL超时时间：28800s</li>
+<li>返回<code>Too many connections</code></li>
+<li>返回<code>MySQL has gone away</code></li>
+<li>正常。</li>
 </ol>
-<p>遇到问题：</p>
-<p>调用php提供的接口（涉及到MySQL连接）50次+，php就会容易出现 <code>Too many connections...</code> 的错误。<br>出现的原因是：</p>
+<h3 id="场景配置">场景配置</h3>
+<ul>
+<li>MySQL最大连接数：50, 超时时间：28800s</li>
+<li>php静态方式启动，启动100个子进程。</li>
+<li>PDO长连接</li>
+</ul>
+<h3 id="原因分析：">原因分析：</h3>
 <ol>
-<li>php使用了长连接:</li>
+<li><p>返回<code>Too many connections</code></p>
+<ul>
+<li>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。</li>
+<li>当该进程不持有MySQL的连接，php向MySQL申请建立连接；</li>
+<li>MySQL一瞧，你已经有50个进程跟我保持连接了，不能建立，原因是：<code>Too many connections</code>；</li>
+</ul>
+</li>
+<li><p>返回<code>MySQL has gone away</code></p>
+<ul>
+<li>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。</li>
+<li>当该进程持有MySQL的连接，但连接无效（连接的sleep时间大于<code>wait_timeout</code>）。</li>
+<li>使用该连接，连接MySQL, failed, 提示：<code>MySQL has gone away</code>。</li>
+<li>新建连接，连接MySQL，ok。</li>
+</ul>
+</li>
+<li><p>正常。</p>
+<ul>
+<li>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。</li>
+<li>当该进程持有MySQL的连接，且连接有效（连接的sleep时间小于<code>wait_timeout</code>）。</li>
+<li>使用该连接，连接MySQL, ok。</li>
+</ul>
+</li>
 </ol>
-<p>情况1：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程不持有MySQL的连接，php向MySQL申请建立连接；<br>MySQL一瞧，你已经有50个进程跟我保持连接了，不能建立，原因是：<code>Too many connections</code>；</p>
-<p>情况2：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程持有MySQL的连接，且连接有效（连接的sleep时间小于wait_timeout）。<br>使用该连接，连接MySQL, ok。</p>
-<p>情况3：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>当该进程持有MySQL的连接，但连接无效（连接的sleep时间大于wait_timeout）。<br>使用该连接，连接MySQL, failed, 提示：<code>MySQL has gone away</code>。<br>新建连接，连接MySQL，ok。</p>
+<h3 id="解决方案">解决方案</h3>
 <ol>
-<li>使用短链接</li>
+<li>使用长连接，调整配置，规避问题发生。调整配置原则如下：<ol>
+<li>解决<code>Too many connections</code>，需设置<code>pm.max_children &lt; max_connections</code>;</li>
+<li><code>pm.max_children</code>越少，<code>wait_timeout</code>越长，调用越频繁，越不容易出现<code>MySQL has gone away.</code></li>
+<li><code>MySQL has gone away.</code>属于notice级别日志，在生产环境下一般会关掉，所以不会返回给调用者，不影响功能。</li>
 </ol>
-<p>情况1：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>进程不持有MySQL的连接，申请与MySQL建立连接。<br>MySQL当前连接数小于最大连接数max_connections，连接ok。</p>
-<p>情况2：</p>
-<p>来了一个请求，php从所有（100个）子进程里挑选出一个闲置的进程来处理该请求。<br>进程不持有MySQL的连接，申请与MySQL建立连接。<br>MySQL当前连接数等于最大连接数max_connections，连接failed。<br>（出现这种情况的可能性非常小，短链接用完之后马上断掉，不会占用连接的，<br>要是真的出现了，只能通过<br>1:排查代码，看是否某个逻辑占用很长时间，导致连接不能被马上释放<br>2:增大max_connections）</p>
+</li>
+<li>使用短连接。也有出现<code>Too many connections</code>的可能，设置<code>pm.max_children &lt; max_connections</code>即可。</li>
+</ol>
+<h3 id="结论">结论</h3>
+<h4 id="如下原则">如下原则</h4>
+<ul>
+<li><p>开发阶段先用短连接。因为：</p>
 <ol>
-<li>经验之谈</li>
+<li>短连接就是用的时候随时取，用完了马上归还，不会出现状态为sleep的连接，所以不用考虑配置<code>wait_timeout</code>用<code>60s</code>呢还是<code>8h</code>，都一样，没用。</li>
+<li>配置php的最大子进程数<code>pm.max_children</code> 与 MySQL的最大连接数<code>max_connections</code>比较容易，只需<code>pm.max_children &lt; max_connections</code>即可。</li>
 </ol>
-<p>选择长连接还是短连接？</p>
-<p>开发阶段先用短连接</p>
-<p>因为，</p>
-<ol>
-<li>短连接就是用的时候随时取，用完了马上归还，不会出现状态为sleep的连接，所以不用考虑配置wait_timeout用60s呢还是8h，都一样，没用。</li>
-<li>配置php的最大子进程数pm.max_children 与 MySQL的最大连接数max_connections比较容易，只需pm.max_children &lt; max_connections即可。</li>
-</ol>
-<p>等到项目运行稳定了，在做性能调优时再考虑是否使用长连接。</p>
-<p>因为：</p>
-<ol>
-<li>长连接不用频繁的与MySQL建立连接，理论上性能会提升很多。</li>
-</ol>
-<p>pm.max_children越少，wait_timeout越长，调用越频繁的情况下，长连接的优势越明显。</p>
-<p>相反，则会导致php连接MySQL时，提示<code>MySQL has gone away.</code></p>
-<p>这种情况下，到底该怎么配置pm.max_children与wait_timeout。<br>pm.max_children可以并发处理的请求数，要想提高并发访问，该值必须大。<br>pm.wait_timeout也不能太长了，不管设置多长，设置成24h，如果两天调用一次api，还会报<code>MySQL has gone away.</code><br>至于调用频繁不频繁，那就看客户心情了。 </p>
+</li>
+<li><p>等到项目运行稳定了，在做性能调优时再考虑是否使用长连接。由于长连接不用频繁的与MySQL建立连接，理论上性能会提升很多。</p>
+</li>
+</ul>
+<h4 id="问题来了">问题来了</h4>
+<p>这种情况下，到底该怎么配置<code>pm.max_children</code>与<code>wait_timeout</code>。<br><code>pm.max_children</code>可以并发处理的请求数，要想提高并发访问，该值必须大。<br><code>pm.wait_timeout</code>也不能太长了，不管设置多长，设置成24h，如果两天调用一次api，还会报<code>MySQL has gone away.</code><br>至于调用频繁不频繁，那就看客户心情了。 </p>
 <p>因此说长连接下报<code>MySQL has gone away.</code>是在所难免的，不过这是php的warn级别的打印，可以通过配置日志级别屏蔽。</p>
+<h4 id="结论中的结论">结论中的结论</h4>
 <p>综合上述情况，要是长连接真的比短连接性能提升1个数量级以上，那就用长连接+提高日志级别来优化性能，否则，还是用短连接吧，配置简单不易出错。</p>
-<p>当请求分发给未与MySQL建立连接的</p>
+<h2 id="MyISAM_vs_InnoDB">MyISAM vs InnoDB</h2>
+<p>MyISAM和InnoDB都是MySQL为用户提供的数据库存储引擎，正确的设置会明显提高性能。</p>
+<ul>
+<li>MyISAM：查询多的表应该使用该引擎。</li>
+<li>InnoDB：增删改多的表应该使用该引擎。</li>
+</ul>
+<p>至于为什么，没去深究。</p>
+<p>测试了一下，果真如此。</p>
+<p>要想用好它，先分析下表的内容是神马。</p>
+<p>比如用户表，就没必要设置成InnoDB，用户数据不会大量改动，倒是用户信息会经常查询。故，还是MyISAM好。</p>
+<p>比如说说表，设置成InnoDB较为合理，一秒中可能有成千上万条说说在插入。使用行级锁比表锁那性能的提升，飕飕的。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -170,13 +204,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/教程技术-br/">教程技术<br/></a>
+  <a class="article-category-link" href="/categories/教程技术/">教程技术</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/涨技能-br/">涨技能<br/></a>
+  <span></span> <a href="/tags/涨技能/">涨技能</a>
   </div>
 
 </div>
@@ -184,7 +218,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/11/2014-11-12_default/" data-title="Php连接Mysql性能提升&lt;br/&gt; | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/2014/11/12/2014-11-12_default/" data-title="Php连接Mysql性能提升 | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -194,18 +228,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/11/11/2014-11-11_default/" title="UML的各种箭头&lt;br/&gt;">
+ <a href="/2014/11/13/2014-11-13_default/" title="Java推送服务器设计">
   <strong>上一篇：</strong><br/>
   <span>
-  UML的各种箭头&lt;br/&gt;</span>
+  Java推送服务器设计</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/11/10/2014-11-10_default/"  title="这里是文章标题">
+<a href="/2014/11/11/2014-11-11_default/"  title="UML的各种箭头">
  <strong>下一篇：</strong><br/> 
- <span>这里是文章标题
+ <span>UML的各种箭头
 </span>
 </a>
 </div>
@@ -224,7 +258,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL表的Engine该设置成MyISAM还是InnoDB"><span class="toc-number">1.</span> <span class="toc-text">MySQL表的Engine该设置成MyISAM还是InnoDB</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前期准备"><span class="toc-number">1.</span> <span class="toc-text">前期准备</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL命令"><span class="toc-number">1.1.</span> <span class="toc-text">MySQL命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php启动参数配置"><span class="toc-number">1.2.</span> <span class="toc-text">php启动参数配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PDO连接"><span class="toc-number">1.3.</span> <span class="toc-text">PDO连接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#遇到的问题"><span class="toc-number">2.</span> <span class="toc-text">遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#长连接_vs_短连接"><span class="toc-number">2.1.</span> <span class="toc-text">长连接 vs 短连接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题描述"><span class="toc-number">2.1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景配置"><span class="toc-number">2.1.2.</span> <span class="toc-text">场景配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原因分析："><span class="toc-number">2.1.3.</span> <span class="toc-text">原因分析：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案"><span class="toc-number">2.1.4.</span> <span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">2.1.5.</span> <span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#如下原则"><span class="toc-number">2.1.5.1.</span> <span class="toc-text">如下原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#问题来了"><span class="toc-number">2.1.5.2.</span> <span class="toc-text">问题来了</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#结论中的结论"><span class="toc-number">2.1.5.3.</span> <span class="toc-text">结论中的结论</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MyISAM_vs_InnoDB"><span class="toc-number">2.2.</span> <span class="toc-text">MyISAM vs InnoDB</span></a></li></ol></li></ol>
  
   </div>
 
@@ -239,13 +273,9 @@
 		
 			<li><a href="/categories/Ofbiz学习/" title="Ofbiz学习">Ofbiz学习<sup>2</sup></a></li>
 		
-			<li><a href="/categories/工作积累/" title="工作积累">工作积累<sup>1</sup></a></li>
+			<li><a href="/categories/工作积累/" title="工作积累">工作积累<sup>2</sup></a></li>
 		
-			<li><a href="/categories/工作积累-br/" title="工作积累&lt;br/&gt;">工作积累&lt;br/&gt;<sup>1</sup></a></li>
-		
-			<li><a href="/categories/教程技术/" title="教程技术">教程技术<sup>4</sup></a></li>
-		
-			<li><a href="/categories/教程技术-br/" title="教程技术&lt;br/&gt;">教程技术&lt;br/&gt;<sup>2</sup></a></li>
+			<li><a href="/categories/教程技术/" title="教程技术">教程技术<sup>6</sup></a></li>
 		
 			<li><a href="/categories/环境搭建/" title="环境搭建">环境搭建<sup>2</sup></a></li>
 		
@@ -258,13 +288,11 @@
 	<p class="asidetitle">Tags</p>
 		<ul class="clearfix">
 		
-			<li><a href="/tags/涨技能/" title="涨技能">涨技能<sup>4</sup></a></li>
-		
-			<li><a href="/tags/涨技能-br/" title="涨技能&lt;br/&gt;">涨技能&lt;br/&gt;<sup>2</sup></a></li>
+			<li><a href="/tags/涨技能/" title="涨技能">涨技能<sup>6</sup></a></li>
 		
 			<li><a href="/tags/ofbiz-待完善/" title="ofbiz 待完善">ofbiz 待完善<sup>2</sup></a></li>
 		
-			<li><a href="/tags/push-app-br/" title="push-app&lt;br/&gt;">push-app&lt;br/&gt;<sup>1</sup></a></li>
+			<li><a href="/tags/push-app/" title="push-app">push-app<sup>1</sup></a></li>
 		
 			<li><a href="/tags/markdown语法/" title="markdown语法">markdown语法<sup>1</sup></a></li>
 		
