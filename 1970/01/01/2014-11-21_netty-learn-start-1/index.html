@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>UML的各种箭头 | Erhsh Blog</title>
+    <title>这里是文章标题 | Erhsh Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="erhsh">
@@ -72,14 +72,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/11/2014-11-11_default/" title="UML的各种箭头" itemprop="url">UML的各种箭头</a>
+      <a href="/1970/01/01/2014-11-21_netty-learn-start-1/" title="这里是文章标题" itemprop="url">这里是文章标题</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-11T04:00:00.000Z" itemprop="datePublished"> Published 11月 11 2014</time>
+    <time datetime="1969-12-31T16:00:00.000Z" itemprop="datePublished"> Published 1月 1 1970</time>
     
   </p>
 </header>
@@ -89,18 +89,22 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UML类和类之间的关系"><span class="toc-number">1.</span> <span class="toc-text">UML类和类之间的关系</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Netty学习"><span class="toc-number">1.</span> <span class="toc-text">Netty学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-number">1.2.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h2 id="UML类和类之间的关系">UML类和类之间的关系</h2>
-<p>一说到类与类之间的关系，脑子里就会蹦出来如下几个名词：<br>聚合，组合，继承，依赖</p>
-<p>在UML类图中，常见的有以下几种关系: 泛化（Generalization）,  实现（Realization），关联（Association)，聚合（Aggregation），组合(Composition)，依赖(Dependency)</p>
-<ul>
-<li>查找某个类的所有子类</li>
-<li>查找类加载器的所有类</li>
-<li>用到ClassLoader <a href="http://hngmduyi.iteye.com/blog/1682222" target="_blank" rel="external">http://hngmduyi.iteye.com/blog/1682222</a></li>
-</ul>
+		<h1 id="Netty学习">Netty学习</h1>
+<p>Netty提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序</p>
+<p>Netty整体架构很清晰的分成2个部分，ChannelFactory和<br>ChannelPipelineFactory,前者主要生产网络通信相关的Channel实例和<br>ChannelSink实例，Netty提供的ChannelFactory实现基本能够满足绝大部分用户的需求，当然你也可以定制自己的ChannelFactory,后者主要关注于具体传输数据的处理，同时也包括其他方面的内容，比如异常处理等等，只要是你希望的，你都可以往里添加相应的handler,一般ChannelPipelineFactory由用户自己实现，因为传输数据的处理及其他操作和业务关联比较紧密，需要自定义处理的handler。</p>
+<p>现在，使用Netty的步骤实际上已经非常明确了，比如面向连接的Netty服务端客户端使用，第一步：实例化一个BootStrap,并且通过构造方法指定一个ChannelFactory实现，第二步：向bootstrap实例注册一个自己实现的ChannelPipelineFactory,第三步：如果是服务器端，bootstrap.bind(newInetSocketAddress(port))，然后等待客户端来连接,如果是客户端，<br>bootstrap.connect(newInetSocketAddress(host,port))取得一个future,这个时候Netty会去连接远程主机，在连接完成后，会发起类型为CONNECTED的ChannelStateEvent，并且开始在你自定义的Pipeline里面流转，如果你注册的handler有这个事件的响应方法的话那么就会调用到这个方法。在此之后就是数据的传输了。</p>
+<p>现在，使用Netty的步骤实际上已经非常明确了，比如面向连接的Netty服务端客户端使用，第一步：实例化一个BootStrap,并且通过构造方法指定一个ChannelFactory实现，第二步：向bootstrap实例注册一个自己实现的ChannelPipelineFactory,第三步：如果是服务器端，bootstrap.bind(newInetSocketAddress(port))，然后等待客户端来连接,如果是客户端，<br>bootstrap.connect(newInetSocketAddress(host,port))取得一个future,这个时候Netty会去连接远程主机，在连接完成后，会发起类型为CONNECTED的ChannelStateEvent，并且开始在你自定义的Pipeline里面流转，如果你注册的handler有这个事件的响应方法的话那么就会调用到这个方法。在此之后就是数据的传输了。</p>
+<p>网络动作归结到最简单就是服务器端bind-&gt;accept-&gt;read-&gt;write,客户端 connect-&gt;read-&gt;write,一般bind或者connect后会有多次read、write。这种特性导致，bind,accept与read,write的线程分离，connect与read、write线程分离，这样做的好处就是无论是服务器端还是客户端吞吐量将有效增大，以便充分利用机器的处理能力，而不是卡在网络连接上，不过一旦机器处理能力充分利用后，这种方式反而可能会因为过于频繁的线程切换导致性能损失而得不偿失，并且这种处理模型复杂度比较高。</p>
+<p>采用什么样的网络事件响应处理机制对于网络吞吐量是非常重要的，Netty采用的是标准的SEDA（StagedEvent-DrivenArchitecture）架构<br>[<a href="http://en.wikipedia.org/wiki/Staged_event-driven_architecture]，其所设计的事件类型，代表了网络交互的各个阶段，并且在每个阶段发生时，触发相应事件交给初始化时生成的pipeline实例进行处理。事件处理都是通过" target="_blank" rel="external">http://en.wikipedia.org/wiki/Staged_event-driven_architecture]，其所设计的事件类型，代表了网络交互的各个阶段，并且在每个阶段发生时，触发相应事件交给初始化时生成的pipeline实例进行处理。事件处理都是通过</a><br>Channels类的静态方法调用开始的，将事件、channel传递给channel持有的Pipeline进行处理，Channels类几乎所有方法都为静态，提供一种Proxy的效果(整个工程里无论何时何地都可以调用其静态方法触发固定的事件流转,但其本身并不关注具体的处理流程)。</p>
+<p>Channels部分事件流转静态方法<br>1．fireChannelOpen2．fireChannelBound3．fireChannelConnected4．fireMessageReceived5．fireWriteComplete6．fireChannelInterestChanged7．fireChannelDisconnected8．fireChannelUnbound9．fireChannelClosed10.fireExceptionCaught11.fireChildChannelStateChanged</p>
+<p><a href="http://wenku.baidu.com/view/e9638e25ccbff121dd3683c2.html" target="_blank" rel="external">http://wenku.baidu.com/view/e9638e25ccbff121dd3683c2.html</a></p>
+<h2 id="前言">前言</h2>
+<h2 id="分析">分析</h2>
+<h2 id="总结">总结</h2>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -122,7 +126,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/11/2014-11-11_default/" data-title="UML的各种箭头 | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/1970/01/01/2014-11-21_netty-learn-start-1/" data-title="这里是文章标题 | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -132,16 +136,16 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/11/12/2014-11-12_default/" title="Php连接Mysql性能提升">
+ <a href="/2014/11/02/2014-11-02_my-first-blog-on-github/" title="折腾了好几天，还好最终有那么点意思。">
   <strong>上一篇：</strong><br/>
   <span>
-  Php连接Mysql性能提升</span>
+  折腾了好几天，还好最终有那么点意思。</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/11/10/2014-11-10_default/"  title="这里是文章标题">
+<a href="/1970/01/01/1970-01-01_template/"  title="这里是文章标题">
  <strong>下一篇：</strong><br/> 
  <span>这里是文章标题
 </span>
@@ -162,7 +166,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UML类和类之间的关系"><span class="toc-number">1.</span> <span class="toc-text">UML类和类之间的关系</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Netty学习"><span class="toc-number">1.</span> <span class="toc-text">Netty学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-number">1.2.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
  
   </div>
 

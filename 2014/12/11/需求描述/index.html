@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>UML的各种箭头 | Erhsh Blog</title>
+    <title>需求 | Erhsh Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="erhsh">
     
-    <meta name="description" itemprop="description" content="方便自己">
+    <meta name="description" itemprop="description" content="需求。">
     
     
     
@@ -72,14 +72,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/11/2014-11-11_default/" title="UML的各种箭头" itemprop="url">UML的各种箭头</a>
+      <a href="/2014/12/11/需求描述/" title="需求" itemprop="url">需求</a>
   </h1>
   <p class="article-author">By
        
 		<a href="http://blog.erhsh.com/about" title="erhsh" target="_blank" itemprop="author">erhsh</a>
 		
   <p class="article-time">
-    <time datetime="2014-11-11T04:00:00.000Z" itemprop="datePublished"> Published 11月 11 2014</time>
+    <time datetime="2014-12-11T09:00:00.000Z" itemprop="datePublished"> Published 12月 11 2014</time>
     
   </p>
 </header>
@@ -89,17 +89,204 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UML类和类之间的关系"><span class="toc-number">1.</span> <span class="toc-text">UML类和类之间的关系</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#商户管理系统"><span class="toc-number">1.</span> <span class="toc-text">商户管理系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#订单管理系统"><span class="toc-number">2.</span> <span class="toc-text">订单管理系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#库存管理系统"><span class="toc-number">3.</span> <span class="toc-text">库存管理系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#财务结算系统"><span class="toc-number">4.</span> <span class="toc-text">财务结算系统</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="UML类和类之间的关系">UML类和类之间的关系</h2>
-<p>一说到类与类之间的关系，脑子里就会蹦出来如下几个名词：<br>聚合，组合，继承，依赖</p>
-<p>在UML类图中，常见的有以下几种关系: 泛化（Generalization）,  实现（Realization），关联（Association)，聚合（Aggregation），组合(Composition)，依赖(Dependency)</p>
+		<h4 id="商户管理系统">商户管理系统</h4>
+<p>下面流程由Admin用户执行。</p>
 <ul>
-<li>查找某个类的所有子类</li>
-<li>查找类加载器的所有类</li>
-<li>用到ClassLoader <a href="http://hngmduyi.iteye.com/blog/1682222" target="_blank" rel="external">http://hngmduyi.iteye.com/blog/1682222</a></li>
+<li><p>用户角色关系初始化</p>
+<ul>
+<li>创建总公司用户角色<ul>
+<li>角色名称：总公司用户</li>
+<li>角色描述：系统订单的最终确认者。</li>
+<li>上级角色：无</li>
+</ul>
+</li>
+<li>创建省级经销商角色<ul>
+<li>角色名称：省级经销商</li>
+<li>角色描述：主要负责审批下属经销商提交的订单，也可以下订单。</li>
+<li>上级角色：总公司用户</li>
+</ul>
+</li>
+<li>创建市级经销商<ul>
+<li>角色名称：市级经销商</li>
+<li>角色描述：主要负责审批下属经销商提交的订单，也可以下订单。</li>
+<li>上级角色：省级经销商</li>
+</ul>
+</li>
+<li>创建县级经销商<ul>
+<li>角色名称：县级经销商</li>
+<li>角色描述：下订单。</li>
+<li>上级角色：市级经销商</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>用户注册</p>
+<ul>
+<li>注册总公司用户<ul>
+<li>输入登录名称，登录密码</li>
+<li>选择用户角色：总公司用户</li>
+<li>选择上级用户：无</li>
+<li>完成注册。</li>
+</ul>
+</li>
+<li>注册省级经销商用户<ul>
+<li>输入登录名称，登录密码</li>
+<li>选择用户角色：省级经销商</li>
+<li>选择上级用户：查找所有总公司用户列表，选择其一。</li>
+<li>完成注册。</li>
+</ul>
+</li>
+<li>注册市级经销商用户<ul>
+<li>输入登录名称，登录密码</li>
+<li>选择用户角色：市级经销商</li>
+<li>选择上级用户：查找所有省级经销商列表，选择其一。</li>
+<li>完成注册</li>
+</ul>
+</li>
+<li>注册县级经销商用户<ul>
+<li>输入登录名称，登录密码</li>
+<li>选择用户角色：县级经销商</li>
+<li>选择上级用户：查找所有市级经销商列表，选择其一。</li>
+<li>完成注册</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="订单管理系统">订单管理系统</h4>
+<ul>
+<li><p>订单生命周期状态描述</p>
+<ul>
+<li>下单成功场景<ul>
+<li>新建订单，待审批</li>
+<li>审批通过，待付款</li>
+<li>付款完成，待确认</li>
+<li>付款确认，待发货</li>
+<li>仓库发货，待收货</li>
+<li>用户签收，已完成</li>
+</ul>
+</li>
+<li>审批失败场景<ul>
+<li>新建订单，待审批</li>
+<li>审批失败，已完成</li>
+</ul>
+</li>
+<li>付款失败场景<ul>
+<li>新建订单，待审批</li>
+<li>审批通过，待付款</li>
+<li>付款失败，已完成</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>订单主要成功执行流程</p>
+<ul>
+<li>县级经销商下单<ul>
+<li>浏览商品列表</li>
+<li>把选择好的商品加入购物车</li>
+<li>点击结账按钮，进入结账页面</li>
+<li>选择配送地址及支付方式</li>
+<li>提交订单到市级经销商。（订单状态：新建订单，待审批）</li>
+</ul>
+</li>
+<li>市级经销商审单<ul>
+<li>进入订单管理系统，点击订单列表</li>
+<li>系统列出来自县级经销商的待审批订单。</li>
+<li>选择合格的订单，提交订单到省级经销商。    （订单状态：新建订单，待审批）</li>
+<li>选择不合格的订单，输入不合格原因，打回。（订单状态：审批未通过，已完成）</li>
+<li>系统更新订单列表状态。</li>
+</ul>
+</li>
+<li>省级经销商审单<ul>
+<li>进入订单管理系统，点击订单列表。</li>
+<li>系统列出来自市级经销商的待审批订单。</li>
+<li>选择合格的订单，提交订单到总公司用户。    （订单状态：新建订单，待审批）</li>
+<li>选择不合格的订单，输入不合格原因，打回。（订单状态：审批未通过，已完成）</li>
+<li>系统更新订单列表状态。</li>
+</ul>
+</li>
+<li>总公司用户接单<ul>
+<li>进入订单管理系统，点击订单列表</li>
+<li>系统列出来自省级经销商的待审批订单。</li>
+<li>选择合格的订单，提交订单到县级经销商。    （订单状态：审批通过，待付款）</li>
+<li>选择不合格的订单，输入不合格原因，打回。（订单状态：审批未通过，已完成）</li>
+<li>系统更新订单列表状态。</li>
+</ul>
+</li>
+<li>县级经销商付款<ul>
+<li>进入订单管理系统，点击订单列表。</li>
+<li>系统列出待付款订单。</li>
+<li>点击付款按钮，进入付款页面</li>
+<li>付款完成后，提交订单到总公司财务。（订单状态：付款完成，待确认）</li>
+<li>系统更新订单列表状态。</li>
+</ul>
+</li>
+<li>财务部用户接单<ul>
+<li>进入订单管理系统，点击订单列表。</li>
+<li>系统列出来县级经销商的待确认订单。</li>
+<li>财务确认货款无误后，提交订单到仓库。（订单状态：付款确认，待发货）</li>
+<li>系统更新订单列表状态。</li>
+</ul>
+</li>
+<li>仓库管理员出货<ul>
+<li>进入订单管理系统，点击订单列表。</li>
+<li>系统列出来自财务部的待发货订单。</li>
+<li>仓库根据订单信息安排发货</li>
+<li>录入快递公司及快递单号，提交订单到县级经销商。（订单状态：仓库发货，待收货）</li>
+</ul>
+</li>
+<li>县级经销商验收<ul>
+<li>收到订单对应商品</li>
+<li>进入订单管理系统，点击订单列表。</li>
+<li>系统列出待收货订单。</li>
+<li>点击确认收货，结束本次下单。- 用户签收，已完成</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="库存管理系统">库存管理系统</h4>
+<ul>
+<li>新建目录</li>
+</ul>
+<p>点击主菜单目录项，进入目录管理页面，点击目录标签，新建产品目录，输入目录标识，以及目录名称。点击更新按钮，完成新建产品目录。</p>
+<p><img src="02Kucun_02Mulu_01new.png" alt=""></p>
+<p><img src="02Kucun_02Mulu_02edit.png" alt=""></p>
+<ul>
+<li>新建分类</li>
+</ul>
+<p>点击主菜单目录项，进入目录管理页面，点击分类标签，新建分类，输入分类标识、分类名称。点击更新按钮，完成新建分类。</p>
+<p><img src="02Kucun_03Fenlei_01new.png" alt=""></p>
+<p><img src="02Kucun_03Fenlei_02edit.png" alt=""></p>
+<ul>
+<li>新建产品</li>
+</ul>
+<p>点击主菜单目录项，进入目录管理页面，点击产品标签，新建产品，输入产品标识、产品名称。点击创建按钮，完成新建产品。</p>
+<p><img src="02Kucun_06Chanpin_01new.png" alt=""></p>
+<p><img src="02Kucun_06Chanpin_02edit.png" alt=""></p>
+<ul>
+<li>新增仓库</li>
+</ul>
+<p>设备/场所/新建/场所类型/仓库</p>
+<p><img src="02Kucun_01Cangku_01new.png" alt=""></p>
+<p><img src="02Kucun_01Cangku_02edit.png" alt=""></p>
+<ul>
+<li>分类关联目录</li>
+</ul>
+<p>选择目录，点击分类按钮，选择分类ID，添加。<br>（目录还可以与分类产品店铺关联，方法类似）</p>
+<p><img src="02Kucun_05guanlian_01selectdir.png" alt=""></p>
+<p><img src="02Kucun_05guanlian_02selectclass.png" alt=""></p>
+<h4 id="财务结算系统">财务结算系统</h4>
+<ul>
+<li>线上返点<ul>
+<li>总公司用户查看年度销售额，指定返点策略，生成返点订单给财务</li>
+<li>财务部门返点金额下发到指定用户。</li>
+</ul>
+</li>
 </ul>
   
 	</div>
@@ -108,13 +295,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/教程技术/">教程技术</a>
+  <a class="article-category-link" href="/categories/工作积累/">工作积累</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/涨技能/">涨技能</a>
+  <span></span> <a href="/tags/ofbiz/">ofbiz</a>
   </div>
 
 </div>
@@ -122,7 +309,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://blog.erhsh.com/2014/11/11/2014-11-11_default/" data-title="UML的各种箭头 | Erhsh Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://blog.erhsh.com/2014/12/11/需求描述/" data-title="需求 | Erhsh Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -131,19 +318,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/11/12/2014-11-12_default/" title="Php连接Mysql性能提升">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Php连接Mysql性能提升</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/11/10/2014-11-10_default/"  title="这里是文章标题">
+<a href="/2014/12/02/2014-12-02_ofbiz-01recognize-02eclipse-debug/"  title="Eclipse下启动Ofbiz后，Https访问不了">
  <strong>下一篇：</strong><br/> 
- <span>这里是文章标题
+ <span>Eclipse下启动Ofbiz后，Https访问不了
 </span>
 </a>
 </div>
@@ -162,7 +341,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UML类和类之间的关系"><span class="toc-number">1.</span> <span class="toc-text">UML类和类之间的关系</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#商户管理系统"><span class="toc-number">1.</span> <span class="toc-text">商户管理系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#订单管理系统"><span class="toc-number">2.</span> <span class="toc-text">订单管理系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#库存管理系统"><span class="toc-number">3.</span> <span class="toc-text">库存管理系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#财务结算系统"><span class="toc-number">4.</span> <span class="toc-text">财务结算系统</span></a></li></ol>
  
   </div>
 
